@@ -19,7 +19,7 @@ export default function WebSocketTest() {
   const [input, setInput] = useState('');
   const [connectionStatus, setConnectionStatus] = useState('Not connected');
   const [isConnecting, setIsConnecting] = useState(false);
-  const baseWsUrl = process.env.NEXT_PUBLIC_WEBSOCKET_URL || 'ws://localhost:3000';
+  const baseWsUrl = process.env.NEXT_PUBLIC_WEBSOCKET_URL || 'wss://localhost:3000';
 
   const connectWebSocket = () => {
     if (ws) {
@@ -33,10 +33,12 @@ export default function WebSocketTest() {
     setConnectionStatus('Connecting...');
     
     try {
-      const wsUrl = baseWsUrl + '/api/ws';
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      const wsUrl = `${protocol}//${window.location.host}/api/ws`;
+      const socket = new WebSocket(wsUrl);
+  
       console.log('Attempting to connect to:', wsUrl);
       
-      const socket = new WebSocket(wsUrl);
       
       // Connection opened
       socket.onopen = (event) => {
