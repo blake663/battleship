@@ -21,6 +21,7 @@ nextApp.prepare().then(() => {
   wss.on('connection', (ws: WebSocket) => {
     console.log('Client connected');
     clients.add(ws);
+    console.log('Clients:', clients.size)
   
     ws.on('message', (message: string, isBinary: boolean) => {
       console.log('Received:', isBinary ? message : message.toString());
