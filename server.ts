@@ -1,8 +1,8 @@
-import { WebSocketServer } from 'ws';
-import { IncomingMessage } from 'http';
-import next, { NextApiRequest } from 'next';
+import { WebSocketServer, WebSocket } from 'ws';
+import next from 'next';
 import http from 'http';
 import { parse } from 'url';
+import net from 'net';
 
 // create custom server
 const nextApp = next({ dev: process.env.NODE_ENV !== 'production' });
@@ -22,11 +22,13 @@ nextApp.prepare().then(() => {
     console.log('Client connected');
     clients.add(ws);
     console.log('Clients:', clients.size)
-  
     ws.on('message', (message: string, isBinary: boolean) => {
       console.log('Received:', isBinary ? message : message.toString());
       // Echo the message back
-      ws.send(`Echo: ${message}`);
+      // ws.send(`Echo: ${message}`);
+      clients.forEach(client => {
+        client.send(`Echo: ${message}`);
+      });
     });
   
     ws.on('close', () => {
@@ -35,7 +37,7 @@ nextApp.prepare().then(() => {
     });
   });
 
-  server.on('upgrade', (req: http.IncomingMessage, socket: http.Socket, head: Buffer) => {
+  server.on('upgrade', (req: http.IncomingMessage, socket: net.Socket, head: Buffer) => {
     
     console.log('Upgrade request received');
     
@@ -51,7 +53,9 @@ nextApp.prepare().then(() => {
     }
   });
 
-  server.listen(3000, () => {
-    console.log('Server started on port 3000');
+  const port = process.env.PORT || 3000;
+
+  server.listen(port, () => {
+    console.log(`Server started on port ${port}`);
   });
 });

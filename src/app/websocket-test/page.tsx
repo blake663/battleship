@@ -19,6 +19,7 @@ export default function WebSocketTest() {
   const [input, setInput] = useState('');
   const [connectionStatus, setConnectionStatus] = useState('Not connected');
   const [isConnecting, setIsConnecting] = useState(false);
+  const baseWsUrl = process.env.NEXT_PUBLIC_WEBSOCKET_URL || 'ws://localhost:3000';
 
   const connectWebSocket = () => {
     if (ws) {
@@ -32,7 +33,7 @@ export default function WebSocketTest() {
     setConnectionStatus('Connecting...');
     
     try {
-      const wsUrl = 'ws://localhost:3000/api/ws';
+      const wsUrl = baseWsUrl + '/api/ws';
       console.log('Attempting to connect to:', wsUrl);
       
       const socket = new WebSocket(wsUrl);
@@ -79,7 +80,7 @@ export default function WebSocketTest() {
   };
 
   // Use useCallback to memoize the connectWebSocket function
-  const connectWebSocketCallback = useCallback(connectWebSocket, [ws]);
+  const connectWebSocketCallback = useCallback(connectWebSocket, [ws, baseWsUrl]);
 
   useEffect(() => {
     if (!ws || ws.readyState === WebSocket.CLOSED) {
