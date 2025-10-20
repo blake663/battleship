@@ -1,6 +1,6 @@
 "use client"
 import { CSSProperties, useMemo, useRef, useState } from "react";
-import { DndContext, useDraggable, useDroppable, type DragStartEvent, type DragEndEvent, type UniqueIdentifier, DragOverlay, useDndContext } from "@dnd-kit/core";
+import { DndContext, useDraggable, useDroppable, type DragStartEvent, type DragEndEvent, type UniqueIdentifier, DragOverlay, useDndContext, type Modifier } from "@dnd-kit/core";
 
 type DragShipItem = { name: string; size: number; color: string, horizontal: boolean };
 type DragShipData = { type: "SHIP"; item: DragShipItem };
@@ -67,11 +67,6 @@ const defaultShips: Ship[] = [
 
 const gridSize = 44;
 
-
-// import {createSnapModifier} from '@dnd-kit/modifiers';
-
-// const snapToGridModifier = createSnapModifier(gridSize);
-
 export default function Game() {
   const [shipPieces, setShipPieces] = useState(defaultShips);
   const [activeDrag, setActiveDrag] = useState<{ name: string; size: number; color: string, horizontal: boolean } | null>(null);
@@ -108,7 +103,7 @@ export default function Game() {
     return true;
   }
 
-  function snapToGrid(args: any) {
+  const snapToGrid: Modifier = (args) => {
     const {transform, draggingNodeRect} = args;
     
     // snap when inside board
